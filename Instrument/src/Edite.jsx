@@ -6,6 +6,47 @@ import './App.css'
 
 function Edit() {
 
+    useEffect(() => {
+        newverifToken()
+    }
+    , [])
+    
+    
+    const newverifToken = () => {
+      const token = localStorage.getItem('token')
+      if (token) {
+          verifToken()
+      }
+      else {
+          console.log("Pas de token")
+          navigate('/');
+      }
+    }
+    
+    const verifToken = () => {
+      const token = localStorage.getItem('token')
+      console.log(token)
+      fetch('http://localhost:3000/check/token', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({token})
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log("Token bien vérifié");
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+          navigate('/');
+      });
+    }
+
+
+
+
+
     const [instrument, setInstruments] = useState(
         {
             Nom: '',

@@ -4,6 +4,12 @@ import App from './App';
 
 
 function Login() {
+
+    useEffect(() => {
+        newverifToken()
+    }
+    , [])
+
     
     const [user, setUser] = useState(false)
 
@@ -59,8 +65,9 @@ function Login() {
         })
         .then(response => response.json())
         .then(data => {
+            console.log("Connection réussie")
             createToken()
-            
+            verifToken()
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -78,7 +85,7 @@ function Login() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data.token);
+            console.log("Token bien créé");
             localStorage.setItem('token', data.token)
         })
         .catch((error) => {
@@ -86,9 +93,20 @@ function Login() {
         });
     }
 
-    const token = localStorage.getItem('token')
+    const newverifToken = () => {
+        const token = localStorage.getItem('token')
+        if (token) {
+            verifToken()
+        }
+        else {
+            console.log("Pas de token")
+            setUser(false)
+        }
+    }
 
     const verifToken = () => {
+        const token = localStorage.getItem('token')
+        console.log(token)
         fetch('http://localhost:3000/check/token', {
             method: 'POST',
             headers: {
@@ -98,26 +116,28 @@ function Login() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
+            console.log("Token bien vérifié");
             setUser(true)
-            console.log(user)
         })
         .catch((error) => {
+            setUser(false)
             console.error('Error:', error);
         });
     }
-    console.log("passer");
 
-    useEffect(() => {
+    const logout = () => {
+        localStorage.removeItem('token')
+        setUser(false)
+    }
 
-        
-    }, [])
+
+
 
     if (user) {
-        console.log("passer");
         return (
             <div>
                 <h2>Welcome back!</h2>
+                <button onClick={logout}>Log out</button>
             </div>
         );
     } else {
@@ -128,7 +148,6 @@ function Login() {
             <input onInput={(e) => inputLogin(e)} type="text" placeholder="Login" /> <br /> <br />
             <input onInput={(e) => inputPassword(e)} type="password" placeholder="Pasword" /> <br /> <br />
             <button onClick={login}>Login</button>
-            <button onClick={createToken}>Cookie</button>
                 <button onClick={verifToken}>Verif Token</button>
             </>
         );

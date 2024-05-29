@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
 app.use(cors());
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -153,13 +154,13 @@ app.post('/check/token', async (req, res) => {
     console.log(token);
     jwt.verify(token, 'secretKey', (err, user) => {
         if (err) {
+            console.log("Token Invalide");
             return res.status(403).json({ message: "Token invalide." });
         }
-        console.log("test");
+        console.log("Token Valide");
         res.status(200).json({ message: "Token valide." });
     });
 });
-
 
 
 app.listen(3000, () => {
