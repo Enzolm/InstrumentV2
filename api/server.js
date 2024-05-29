@@ -140,13 +140,26 @@ app.post('/create/token', async (req, res) => {
         if (user.length === 0) {
             return res.status(404).json({ message: "Utilisateur non trouvé." });
         }
-        const token = jwt.sign({ userId: user[0].id }, 'secretKey');
-        res.status(200).json({ token: token });
+        const token = jwt.sign({ userId: user[0].id }, 'secretKey' , { expiresIn: '1h' });
+        res.status(200).json({ token });
     } catch (error) {
         console.error("Erreur lors de la création du token:", error);
         res.status(500).json({ message: "Une erreur s'est produite lors de la création du token." });
     }
 });
+
+app.post('/check/token', async (req, res) => {
+    const token = req.body['token'];
+    console.log(token);
+    jwt.verify(token, 'secretKey', (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: "Token invalide." });
+        }
+        console.log("test");
+        res.status(200).json({ message: "Token valide." });
+    });
+});
+
 
 
 app.listen(3000, () => {

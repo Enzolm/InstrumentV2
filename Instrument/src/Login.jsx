@@ -4,6 +4,11 @@ import App from './App';
 
 
 function Login() {
+    
+    const [user, setUser] = useState(false)
+
+
+
     const [Login, setLogin] = useState('')
     useEffect(() => {
         console.log(Login)       
@@ -54,7 +59,8 @@ function Login() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
+            createToken()
+            
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -63,7 +69,7 @@ function Login() {
 
     const createToken = () => {
         console.log(JSON.stringify({Login}))
-        fetch('http://localhost:3000/token', {
+        fetch('http://localhost:3000/create/token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -72,24 +78,61 @@ function Login() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data)
+            console.log(data.token);
+            localStorage.setItem('token', data.token)
         })
         .catch((error) => {
             console.error('Error:', error);
         });
     }
 
+    const token = localStorage.getItem('token')
 
-  return (
-    <>
-      <h1>Login</h1>
-      <br />
-      <input onInput={(e) => inputLogin(e)} type="text" placeholder="Login" /> <br /> <br />
-      <input onInput={(e) => inputPassword(e)} type="password" placeholder="Pasword" /> <br /> <br />
-      <button onClick={login}>Login</button>
-      <button onClick={createToken}>Cookie</button>
-    </>
-  );
+    const verifToken = () => {
+        fetch('http://localhost:3000/check/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({token})
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            setUser(true)
+            console.log(user)
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    console.log("passer");
+
+    useEffect(() => {
+
+        
+    }, [])
+
+    if (user) {
+        console.log("passer");
+        return (
+            <div>
+                <h2>Welcome back!</h2>
+            </div>
+        );
+    } else {
+        return (
+            <>
+            <h1>Login</h1>
+            <br />
+            <input onInput={(e) => inputLogin(e)} type="text" placeholder="Login" /> <br /> <br />
+            <input onInput={(e) => inputPassword(e)} type="password" placeholder="Pasword" /> <br /> <br />
+            <button onClick={login}>Login</button>
+            <button onClick={createToken}>Cookie</button>
+                <button onClick={verifToken}>Verif Token</button>
+            </>
+        );
+    }
 }
 
 export default Login;
