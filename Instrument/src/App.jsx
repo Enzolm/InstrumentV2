@@ -18,8 +18,6 @@ function App() {
           <Route path="/edit/:id" element={<Edit />} />
           <Route path="/delete/:id" element={<Delete />} />
           <Route path="/login" element={<Login />} />
-
-
         </Routes>
     </>
   )

@@ -41,8 +41,6 @@ useEffect(() => {
 , [])
 
 
-const [user, setUser] = useState(false)
-
 const newverifToken = () => {
   const token = localStorage.getItem('token')
   if (token) {
